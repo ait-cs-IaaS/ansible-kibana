@@ -27,7 +27,7 @@
 - name: Start Kibana
   service:
     name: kibana
-    state: started	
+    state: started
     enabled: true
 
 
