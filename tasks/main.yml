@@ -30,6 +30,11 @@
     state: started
     enabled: true
 
+- name: Wait for kibana to become ready before adding dasboards
+  pause:
+      seconds: 35 
+  when: kibana_extra_dashboards|length
+
 - name: Import additional dashboards
   uri:
     url: http://{{ kibana_server_ip }}:{{ kibana_server_port }}/api/saved_objects/_import
