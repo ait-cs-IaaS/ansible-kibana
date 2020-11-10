@@ -9,9 +9,7 @@ kibana_server_ip: "localhost"
 kibana_server_port: 5601
 kibana_user: "kibana"
 kibana_password: "kibana"
-dashboard_name: aminer.ndjson
-dashboard_path: ../dashboards/{{ dashboard_name }}
-dashboard_file: "{{ lookup('file', dashboard_path) }}"
+kibana_extra_dashboards: []
 ```
 ## Examples
 

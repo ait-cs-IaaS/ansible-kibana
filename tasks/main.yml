@@ -30,7 +30,7 @@
     state: started
     enabled: true
 
-- name: "Import aminer dashboard "
+- name: Import additional dashboards
   uri:
     url: http://{{ kibana_server_ip }}:{{ kibana_server_port }}/api/saved_objects/_import
     method: POST
@@ -40,9 +40,11 @@
     force_basic_auth: yes
     body:
       file:
-        content: "{{ dashboard_file }}"
-        filename: "{{ dashboard_name }}"
+        content: "{{ lookup('file', item) }}"
+        filename: "{{ item | basename }}"
         mime_type: application/json
     body_format: form-multipart
     headers:
       kbn-xsrf: true
+    loop: "{{ kibana_extra_dashboards }}"
+    
