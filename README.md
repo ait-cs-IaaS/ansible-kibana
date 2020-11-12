@@ -5,6 +5,10 @@
 
 ## Defaults
 ```
+# default version
+elastic_stack_version: 7.9.3
+elastic_stack_version_lock: true
+
 kibana_server_ip: "localhost"
 kibana_server_port: 5601
 kibana_user: "kibana"
@@ -14,6 +18,8 @@ kibana_extra_dashboards: []
 ## Examples
 
 ### Variables
+
+Kibana version can be locked using `elastic_stack_version` and `elastic_stack_version_lock`.
 
 Kibana server IP and port are configured in *kibana/defaults/main.yml* as follows:
 
