@@ -2,13 +2,22 @@
 - name: Gather rpm package facts
   package_facts:
     manager: auto
-   
+
+- name: Unhold kibana version for install
+  command: apt-mark unhold kibana
+  changed_when: false
+
 # Install Kibana 
 - name: Install Kibana
   apt:
-    name: kibana
+    name: kibana{% if elastic_stack_version is defined and elastic_stack_version|length>0 %}={{ elastic_stack_version }}{% endif %}
     update_cache: yes
   when: "'kibana' not in ansible_facts.packages"
+
+- name: Hold kibana version
+  command: apt-mark hold kibana
+  when: elastic_stack_version_lock
+  changed_when: false
 
 # Configure Kibana
 - name: Update kibana server ip
