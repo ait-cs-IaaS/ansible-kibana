@@ -31,7 +31,7 @@ kibana_xpack_username: "kibana_system"
 kibana_xpack_password: "pass"
 
 ### ssl settings
-kibana_server_ssl_enabled: {{ kibana_xpack_security_enabled }}
+kibana_server_ssl_enabled: "{{ kibana_xpack_security_enabled }}"
 kibana_ssl_certs_path: /etc/kibana/certs
 kibana_ssl_copy_certs: true
 
