@@ -48,6 +48,13 @@ elasticsearch.hosts: []
 xpack.security.enabled: {{ kibana_xpack_security_enabled }}
 
 {% if kibana_xpack_security_enabled %}
+
+# arbitrary string of at least 32 characters that is used to encrypt sensitive
+# properties of saved objects before they’re stored in Elasticsearch
+{% if kibana_xpack_encryptedSavedObjects_encryption_key is defined and kibana_xpack_encryptedSavedObjects_encryption_key|length>0 %}
+xpack.encryptedSavedObjects.encryptionKey: "{{ kibana_xpack_encryptedSavedObjects_encryption_key }}"
+{% endif %}
+
 # If your Elasticsearch is protected with basic authentication, these settings provide
 # the username and password that the Kibana server uses to perform maintenance on the Kibana
 # index at startup. Your Kibana users still need to authenticate with Elasticsearch, which
@@ -148,3 +155,12 @@ elasticsearch.requestTimeout: {{ kibana_elasticsearch_request_timeout }}
 # Specifies locale to be used for all localizable strings, dates and number formats.
 # Supported languages are the following: English - en , by default , Chinese - zh-CN .
 #i18n.locale: "en"
+
+# configure xpack features
+xpack.apm.enabled: {{ kibana_xpack_apm_enabled }}
+xpack.searchprofiler.enabled: {{ kibana_xpack_searchprofiler_enabled }}
+# logs and metric apps
+xpack.infra.enabled: {{ kibana_xpack_infra_enabled }}
+# machine learning
+xpack.ml.enabled: {{ kibana_xpack_ml_enabled }}
+monitoring.enabled: {{ kibana_monitoring_enabled }}

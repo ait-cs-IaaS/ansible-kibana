@@ -15,11 +15,18 @@ kibana_server_base_path: ""
 kibana_elasticsearch_hosts: ["http://localhost:9200"]
 kibana_extra_dashboards: []
 kibana_elasticsearch_request_timeout: 30000
-
 kibana_server_protocol: "{{ 'https' if kibana_server_ssl_enabled else 'http' }}"
 
-## x-pack config
+## x-pack features
+kibana_xpack_apm_enabled: true
+kibana_xpack_searchprofiler_enabled: true
+kibana_xpack_infra_enabled: true
+kibana_xpack_ml_enabled: true
+kibana_monitoring_enabled: true
+
+## x-pack security config
 kibana_xpack_security_enabled: false
+kibana_xpack_encryptedSavedObjects_encryption_key: ""
 kibana_xpack_username: "kibana_system"
 kibana_xpack_password: "pass"
 
