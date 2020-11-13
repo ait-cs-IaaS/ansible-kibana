@@ -19,18 +19,43 @@
   when: elastic_stack_version_lock
   changed_when: false
 
-# Configure Kibana
-- name: Update kibana server ip
-  lineinfile:
-    destfile: /etc/kibana/kibana.yml
-    regexp: 'server.host:'
-    line: 'server.host: {{ kibana_server_ip }}'
 
-- name: Update kibana server port
-  lineinfile:
-    destfile: /etc/kibana/kibana.yml
-    regexp: 'server.port:'
-    line: 'server.port: {{ kibana_server_port }}'
+- name: Ensure certs directory exits
+  file:
+    path: "{{ kibana_ssl_certs_path }}"
+    state: directory
+    mode: "02750"
+    owner: root
+    group: kibana
+  when:
+    - kibana_xpack_security_enabled|bool
+    - kibana_server_ssl_enabled|bool
+
+- name: Copy kibana HTTP ssl certificates
+  copy:
+    src: "{{ item }}"
+    dest: "{{ kibana_ssl_certs_path }}/{{ item | basename }}"
+    mode: "0660"
+    owner: root
+    group: kibana
+  loop:
+    - "{{ kibana_server_ssl_cert }}"
+    - "{{ kibana_server_ssl_key }}"
+  when:
+    - kibana_xpack_security_enabled|bool
+    - kibana_server_ssl_enabled|bool
+    - kibana_ssl_copy_certs|bool
+  notify: restart kibana
+
+- name: Configure kibana
+  become: yes
+  template:
+    src: "{{ kibana_config_tpl }}"
+    dest: "{{ kibana_config_dest }}"
+    mode: "0660"
+    owner: root
+    group: kibana
+  notify: restart kibana
 
 # Start Kibana
 - name: Start Kibana
@@ -46,11 +71,11 @@
 
 - name: Import additional dashboards
   uri:
-    url: http://{{ kibana_server_ip }}:{{ kibana_server_port }}/api/saved_objects/_import
+    url: "{{ kibana_server_protocol }}://{{ kibana_server_ip }}:{{ kibana_server_port }}/api/saved_objects/_import"
     method: POST
     return_content: yes
-    user: "kibana"
-    password: "kibana"
+    user: "{{ kibana_xpack_username }}"
+    password: "{{ kibana_xpack_password }}"
     force_basic_auth: yes
     body:
       file:
