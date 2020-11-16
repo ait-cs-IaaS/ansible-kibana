@@ -41,6 +41,7 @@
   loop:
     - "{{ kibana_server_ssl_cert }}"
     - "{{ kibana_server_ssl_key }}"
+    - "{{ kibana_server_ssl_ca }}"
   when:
     - kibana_xpack_security_enabled|bool
     - kibana_server_ssl_enabled|bool

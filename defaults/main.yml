@@ -38,5 +38,6 @@ kibana_ssl_copy_certs: true
 #### kibana https certs
 kibana_server_ssl_cert: kibana.crt
 kibana_server_ssl_key: kibana.key
+kibana_server_ssl_ca: ca.crt
 kibana_ssl_verification_mode: full
 
