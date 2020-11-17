@@ -5,9 +5,39 @@
 elastic_stack_version: 7.9.3
 elastic_stack_version_lock: true
 
+kibana_config_dir: /etc/kibana
+kibana_config_tpl: kibana.yml.j2
+kibana_config_dest: "{{ kibana_config_dir }}/kibana.yml"
+
 kibana_server_ip: "localhost"
 kibana_server_port: 5601
-kibana_user: "kibana"
-kibana_password: "kibana"
-
+kibana_server_base_path: ""
+kibana_elasticsearch_hosts: ["http://localhost:9200"]
 kibana_extra_dashboards: []
+kibana_elasticsearch_request_timeout: 30000
+kibana_server_protocol: "{{ 'https' if kibana_server_ssl_enabled else 'http' }}"
+
+## x-pack features
+kibana_xpack_apm_enabled: true
+kibana_xpack_searchprofiler_enabled: true
+kibana_xpack_infra_enabled: true
+kibana_xpack_ml_enabled: true
+kibana_monitoring_enabled: true
+
+## x-pack security config
+kibana_xpack_security_enabled: false
+kibana_xpack_encryptedSavedObjects_encryption_key: ""
+kibana_xpack_username: "kibana_system"
+kibana_xpack_password: "pass"
+
+### ssl settings
+kibana_server_ssl_enabled: "{{ kibana_xpack_security_enabled }}"
+kibana_ssl_certs_path: /etc/kibana/certs
+kibana_ssl_copy_certs: true
+
+#### kibana https certs
+kibana_server_ssl_cert: kibana.crt
+kibana_server_ssl_key: kibana.key
+kibana_server_ssl_ca: ca.crt
+kibana_ssl_verification_mode: full
+
