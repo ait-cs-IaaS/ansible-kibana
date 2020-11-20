@@ -14,6 +14,7 @@ kibana_server_port: 5601
 kibana_user: "kibana"
 kibana_password: "kibana"
 kibana_extra_dashboards: []
+kibana_security_rules: []
 ```
 ## Examples
 
@@ -36,6 +37,19 @@ In the main file of kibana tasks, these variables are used to modify the certain
     destfile: /etc/kibana/kibana.yml
     regexp: 'server.host:'
     line: 'server.host: {{ kibana_server_ip }}'
+```
+
+Kibana Security Detection Rules can be enabled using their IDs. This feature requires xpack security enabled, SSL and that
+`kibana_xpack_encryptedSavedObjects_encryption_key` is set.
+
+```
+kibana_security_rules:
+  # File Deletion via Shred
+  - rule_id: a1329140-8de3-4445-9f87-908fb6d824f4
+    enabled: true
+  # Base16 or Base32 Encoding/Decoding Activity
+  - rule_id: debff20a-46bc-4a4d-bae5-5cdd14222795
+    enabled: true
 ```
 
 

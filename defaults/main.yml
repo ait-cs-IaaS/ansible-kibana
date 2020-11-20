@@ -41,3 +41,6 @@ kibana_server_ssl_key: kibana.key
 kibana_server_ssl_ca: ca.crt
 kibana_ssl_verification_mode: full
 
+## Kibana Security Detection
+
+kibana_security_rules: []

@@ -65,10 +65,18 @@
     state: started
     enabled: true
 
+# Until kibana is ready it will return 503 - Service unavailable
 - name: Wait for kibana to become ready before adding dasboards
-  pause:
-      seconds: 35 
-  when: kibana_extra_dashboards|length
+  uri:
+    url: "{{ kibana_server_protocol }}://{{ kibana_server_ip }}:{{ kibana_server_port }}/"
+    user: "{{ kibana_xpack_username }}"
+    password: "{{ kibana_xpack_password }}"
+    force_basic_auth: yes
+    method: GET
+  register: _result
+  until: _result.status == 200
+  retries: 30 # retry X times
+  delay: 60 # pause for X sec b/w each call
 
 - name: Import additional dashboards
   uri:
@@ -87,4 +95,52 @@
     headers:
       kbn-xsrf: true
   loop: "{{ kibana_extra_dashboards }}"
-    
+
+- name: Enable the siem signal index required for the detection framework
+  uri:
+    url: "{{ kibana_server_protocol }}://{{ kibana_server_ip }}:{{ kibana_server_port }}/api/detection_engine/index"
+    method: POST
+    status_code: [200, 409]
+    user: "{{ kibana_xpack_username }}"
+    password: "{{ kibana_xpack_password }}"
+    force_basic_auth: yes
+    headers:
+      kbn-xsrf: true
+      Content-Type: application/json
+  register: _result
+  until: _result.status == 409
+  retries: 6 # retry X times
+  delay: 10 # pause for X sec b/w each call
+  when: kibana_security_detection_enabled|bool
+
+- name: Load pre-packed Kibana Security detection rules
+  uri:
+    url: "{{ kibana_server_protocol }}://{{ kibana_server_ip }}:{{ kibana_server_port }}/api/detection_engine/rules/prepackaged"
+    method: PUT
+    user: "{{ kibana_xpack_username }}"
+    password: "{{ kibana_xpack_password }}"
+    force_basic_auth: yes
+    headers:
+      kbn-xsrf: true
+      Content-Type: application/json
+    body_format: json
+    body: "{{ kibana_security_rules }}"
+  register: _result
+  until: _result.json == {"rules_installed":0,"rules_updated":0,"timelines_installed":0,"timelines_updated":0}
+  retries: 6 # retry X times
+  delay: 10 # pause for X sec b/w each call
+  when: kibana_security_detection_enabled|bool
+
+- name: Configure Kibana Security detection rules
+  uri:
+    url: "{{ kibana_server_protocol }}://{{ kibana_server_ip }}:{{ kibana_server_port }}/api/detection_engine/rules/_bulk_update"
+    method: PATCH
+    user: "{{ kibana_xpack_username }}"
+    password: "{{ kibana_xpack_password }}"
+    force_basic_auth: yes
+    headers:
+      kbn-xsrf: true
+      Content-Type: application/json
+    body_format: json
+    body: "{{ kibana_security_rules }}"
+  when: kibana_security_detection_enabled|bool and kibana_security_rules|length>0
