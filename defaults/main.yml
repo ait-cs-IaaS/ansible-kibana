@@ -8,6 +8,10 @@ elastic_stack_version_lock: true
 kibana_config_dir: /etc/kibana
 kibana_config_tpl: kibana.yml.j2
 kibana_config_dest: "{{ kibana_config_dir }}/kibana.yml"
+kibana_local_plugins_dir: /tmp/plugins
+kibana_plugin_bin: /usr/share/kibana/bin/kibana-plugin
+
+kibana_plugins: []
 
 kibana_server_ip: "localhost"
 kibana_server_port: 5601

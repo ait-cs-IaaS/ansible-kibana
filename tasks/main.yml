@@ -58,6 +58,64 @@
     group: kibana
   notify: restart kibana
 
+- name: Ensure local plugins directory exits
+  file:
+    path: "{{ kibana_local_plugins_dir }}"
+    state: directory
+
+- name: Copy local plugin files sources
+  copy:
+    src: "{{ item.src }}"
+    dest: "{{ kibana_local_plugins_dir }}/{{ item.src | basename }}"
+  loop: "{{ kibana_plugins | selectattr('src', 'defined') }}"
+
+- name: Get list of installed kibana plugins
+  become: yes
+  become_user: kibana
+  command: "{{ kibana_plugin_bin }} list"
+  changed_when: no
+  register: plugin_list
+
+- name: Set installed plugins
+  set_fact:
+    kibana_installed_plugins: |
+      {{ {} | combine(plugin_list.stdout_lines | map('regex_replace', '^(.*)@(.*)', '{"\1": "\2"}') | map('from_json')) }}
+
+- name: Remove outdated kibana plugins
+  become: yes
+  become_user: kibana
+  command: "{{ kibana_plugin_bin }} remove {{ item.name }}"
+  loop: "{{ kibana_plugins }}"
+  when: item.version is not defined or (item.name in kibana_installed_plugins.keys() and kibana_installed_plugins[item.name] != item.version)
+
+- name: Install kibana plugins
+  become: yes
+  become_user: kibana
+  command: "{{ kibana_plugin_bin }} install {{ 'file://'+kibana_local_plugins_dir+'/'+(item.src | basename) if item.src is defined else item.url }}"
+  loop: "{{ kibana_plugins }}"
+  notify: restart kibana
+  when: item.version is not defined or item.name not in kibana_installed_plugins.keys() or (item.name in kibana_installed_plugins.keys() and kibana_installed_plugins[item.name] != item.version)
+
+- name: Ensure kibana plugins config directories exist
+  become: yes
+  file:
+    dest: "{{ item.dest | dirname }}"
+    owner: root
+    group: kibana
+    state: directory
+  loop: "{{ kibana_plugins | selectattr('configs', 'defined') | map(attribute='configs') | flatten }}"
+
+- name: Configure kibana plugins
+  become: yes
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    mode: "0660"
+    owner: root
+    group: kibana
+  notify: restart kibana
+  loop: "{{ kibana_plugins | selectattr('configs', 'defined') | map(attribute='configs') | flatten }}"
+
 # Start Kibana
 - name: Start Kibana
   service:
