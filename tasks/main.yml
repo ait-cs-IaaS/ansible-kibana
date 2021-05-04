@@ -90,7 +90,6 @@
 
 - name: Install kibana plugins
   become: yes
-  become_user: kibana
   command: "{{ kibana_plugin_bin }} install {{ 'file://'+kibana_local_plugins_dir+'/'+(item.src | basename) if item.src is defined else item.url }}"
   loop: "{{ kibana_plugins }}"
   notify: restart kibana
@@ -131,8 +130,9 @@
     password: "{{ kibana_xpack_password }}"
     force_basic_auth: yes
     method: GET
+    follow_redirects: all
   register: _result
-  until: _result.status == 200
+  until: _result.status != 503
   retries: 30 # retry X times
   delay: 60 # pause for X sec b/w each call
 
