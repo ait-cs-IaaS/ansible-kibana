@@ -122,6 +122,14 @@
     state: started
     enabled: true
 
+# The uri module won't retry if it recieves a refused to connect because the port is down
+- name: Wait 300 seconds for kibana port to come online
+  wait_for:
+    port: "{{ kibana_server_port }}"
+    host: "{{ kibana_server_ip }}"
+    delay: 10
+    timeout: 300
+
 # Until kibana is ready it will return 503 - Service unavailable
 - name: Wait for kibana to become ready before adding dasboards
   uri:
