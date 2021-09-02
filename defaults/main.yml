@@ -20,6 +20,7 @@ kibana_elasticsearch_hosts: ["http://localhost:9200"]
 kibana_extra_dashboards: []
 kibana_elasticsearch_request_timeout: 30000
 kibana_server_protocol: "{{ 'https' if kibana_server_ssl_enabled else 'http' }}"
+kibana_server_url: "{{ kibana_server_protocol }}://{{ kibana_server_ip }}:{{ kibana_server_port }}"
 
 ## x-pack features
 kibana_xpack_apm_enabled: true

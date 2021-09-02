@@ -133,7 +133,7 @@
 # Until kibana is ready it will return 503 - Service unavailable
 - name: Wait for kibana to become ready before adding dasboards
   uri:
-    url: "{{ kibana_server_protocol }}://{{ kibana_server_ip }}:{{ kibana_server_port }}/"
+    url: "{{ kibana_server_url }}/"
     user: "{{ kibana_xpack_username }}"
     password: "{{ kibana_xpack_password }}"
     force_basic_auth: yes
@@ -146,7 +146,7 @@
 
 - name: Import additional dashboards
   uri:
-    url: "{{ kibana_server_protocol }}://{{ kibana_server_ip }}:{{ kibana_server_port }}/api/saved_objects/_import"
+    url: "{{ kibana_server_url }}/api/saved_objects/_import"
     method: POST
     return_content: yes
     user: "{{ kibana_xpack_username }}"
@@ -164,7 +164,7 @@
 
 - name: Enable the siem signal index required for the detection framework
   uri:
-    url: "{{ kibana_server_protocol }}://{{ kibana_server_ip }}:{{ kibana_server_port }}/api/detection_engine/index"
+    url: "{{ kibana_server_url }}/api/detection_engine/index"
     method: POST
     status_code: [200, 409]
     user: "{{ kibana_xpack_username }}"
@@ -181,7 +181,7 @@
 
 - name: Load pre-packed Kibana Security detection rules
   uri:
-    url: "{{ kibana_server_protocol }}://{{ kibana_server_ip }}:{{ kibana_server_port }}/api/detection_engine/rules/prepackaged"
+    url: "{{ kibana_server_url }}/api/detection_engine/rules/prepackaged"
     method: PUT
     user: "{{ kibana_xpack_username }}"
     password: "{{ kibana_xpack_password }}"
@@ -199,7 +199,7 @@
 
 - name: Configure Kibana Security detection rules
   uri:
-    url: "{{ kibana_server_protocol }}://{{ kibana_server_ip }}:{{ kibana_server_port }}/api/detection_engine/rules/_bulk_update"
+    url: "{{ kibana_server_url }}/api/detection_engine/rules/_bulk_update"
     method: PATCH
     user: "{{ kibana_xpack_username }}"
     password: "{{ kibana_xpack_password }}"
