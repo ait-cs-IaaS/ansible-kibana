@@ -139,6 +139,7 @@
     force_basic_auth: yes
     method: GET
     follow_redirects: all
+    ca_path: "{{ kibana_server_ssl_ca }}"
   register: _result
   until: _result.status != 503
   retries: 30 # retry X times
