@@ -115,6 +115,13 @@
   notify: restart kibana
   loop: "{{ kibana_plugins | selectattr('configs', 'defined') | map(attribute='configs') | flatten }}"
 
+- name: Set Kibana permissions
+  ansible.builtin.file:
+    path: /usr/share/kibana/optimize/
+    state: directory
+    owner: kibana
+    recurse: yes
+
 # Start Kibana
 - name: Start Kibana
   service:
