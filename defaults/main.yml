@@ -12,11 +12,10 @@ kibana_local_plugins_dir: /tmp/plugins
 kibana_plugin_bin: /usr/share/kibana/bin/kibana-plugin
 
 kibana_plugins: []
-
-kibana_server_ip: "localhost"
+kibana_server_ip: localhost
 kibana_server_port: 5601
 kibana_server_base_path: ""
-kibana_elasticsearch_hosts: ["http://localhost:9200"]
+kibana_elasticsearch_hosts: [http://localhost:9200]
 kibana_extra_dashboards: []
 kibana_elasticsearch_request_timeout: 30000
 kibana_server_protocol: "{{ 'https' if kibana_server_ssl_enabled else 'http' }}"
@@ -31,9 +30,9 @@ kibana_monitoring_enabled: true
 
 ## x-pack security config
 kibana_xpack_security_enabled: false
-kibana_xpack_encryptedSavedObjects_encryption_key: ""
-kibana_xpack_username: "kibana_system"
-kibana_xpack_password: "pass"
+kibana_xpack_encrypted_saved_objects_encryption_key: ""
+kibana_xpack_username: kibana_system
+kibana_xpack_password: pass
 
 ### ssl settings
 kibana_server_ssl_enabled: "{{ kibana_xpack_security_enabled }}"

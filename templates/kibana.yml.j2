@@ -55,8 +55,8 @@ xpack.security.enabled: {{ kibana_xpack_security_enabled }}
 
 # arbitrary string of at least 32 characters that is used to encrypt sensitive
 # properties of saved objects before they’re stored in Elasticsearch
-{% if kibana_xpack_encryptedSavedObjects_encryption_key is defined and kibana_xpack_encryptedSavedObjects_encryption_key|length>0 %}
-xpack.encryptedSavedObjects.encryptionKey: "{{ kibana_xpack_encryptedSavedObjects_encryption_key }}"
+{% if kibana_xpack_encrypted_saved_objects_encryption_key is defined and kibana_xpack_encrypted_saved_objects_encryption_key|length>0 %}
+xpack.encryptedSavedObjects.encryptionKey: "{{ kibana_xpack_encrypted_saved_objects_encryption_key }}"
 {% endif %}
 
 # If your Elasticsearch is protected with basic authentication, these settings provide

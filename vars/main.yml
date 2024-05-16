@@ -1,3 +1,4 @@
+---
 # kibana security detection feature
 # only works if SSL is active and encryption key was provided
-kibana_security_detection_enabled: "{{ kibana_server_ssl_enabled and kibana_xpack_encryptedSavedObjects_encryption_key|length>0 }}"
+kibana_security_detection_enabled: "{{ kibana_server_ssl_enabled and kibana_xpack_encrypted_saved_objects_encryption_key|length>0 }}"
