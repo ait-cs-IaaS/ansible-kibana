@@ -29,9 +29,11 @@ server.basePath: "{{ kibana_server_base_path }}"
 #server.name: "your-hostname"
 
 # The URLs of the Elasticsearch instances to use for all your queries.
-{% if kibana_elasticsearch_hosts|length>0 %}
-elasticsearch.hosts: 
-{{ kibana_elasticsearch_hosts | to_nice_yaml | indent(2)}}
+{% if kibana_elasticsearch_hosts | length > 0 %}
+elasticsearch.hosts:
+{% for host in kibana_elasticsearch_hosts %}
+  - "{{ host }}"
+{% endfor %}
 {% else %}
 elasticsearch.hosts: []
 {% endif %}
@@ -82,7 +84,11 @@ server.ssl.key: "{{ kibana_ssl_certs_path }}/{{ kibana_server_ssl_key | basename
 
 # Optional setting that enables you to specify a path to the PEM file for the certificate
 # authority for your Elasticsearch instance.
+{% if kibana_server_ssl_ca is not none %}
 elasticsearch.ssl.certificateAuthorities: [ "{{ kibana_ssl_certs_path }}/{{ kibana_server_ssl_ca | basename }}" ]
+{% else %}
+elasticsearch.ssl.certificateAuthorities: [ "/etc/ssl/certs/ca-certificates.crt" ]
+{% endif %}
 
 # To disregard the validity of SSL certificates, change this setting's value to 'none'.
 elasticsearch.ssl.verificationMode: {{ kibana_ssl_verification_mode }}
